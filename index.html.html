@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>상품 페이지로 이동 중...</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #03C75A;
+      font-family: -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      padding: 24px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+
+    .naver-logo {
+      width: 52px;
+      height: 52px;
+      background: #03C75A;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 28px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -2px;
+    }
+
+    h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    p {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid #e8e8e8;
+      border-top-color: #03C75A;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 24px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .btn-naver {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background: #03C75A;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      margin-bottom: 12px;
+      transition: background 0.2s;
+    }
+    .btn-naver:hover { background: #02b350; }
+
+    .btn-web {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: #f5f5f5;
+      color: #555;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-web:hover { background: #ebebeb; }
+
+    .tip {
+      margin-top: 20px;
+      padding: 12px 14px;
+      background: #f0faf4;
+      border-radius: 10px;
+      font-size: 12px;
+      color: #444;
+      line-height: 1.6;
+      text-align: left;
+    }
+    .tip strong { color: #03C75A; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="naver-logo">N</div>
+  <h1>네이버 앱으로 이동 중...</h1>
+  <p>잠시 후 자동으로 연결됩니다.<br>앱이 열리지 않으면 아래 버튼을 눌러주세요.</p>
+
+  <div class="spinner" id="spinner"></div>
+
+  <a class="btn-naver" id="btnApp" href="#">🛍 네이버 앱으로 열기</a>
+  <a class="btn-web" id="btnWeb" href="#">브라우저로 열기</a>
+
+  <div class="tip">
+    💡 <strong>Tip.</strong> 네이버 앱이 설치되어 있으면 로그인 없이 바로 구매하실 수 있어요!
+  </div>
+</div>
+
+<script>
+  var STORE_URL   = 'https://smartstore.naver.com/highqual_japan/products/12454569432';
+  var DEEPLINK    = 'naversmartshopping://smartstore.naver.com/highqual_japan/products/12454569432';
+  var ANDROID_PKG = 'com.nhn.android.search';  // 네이버 앱 패키지명
+  var INTENT_URL  = 'intent://smartstore.naver.com/highqual_japan/products/12454569432'
+                  + '#Intent;scheme=naversmartshopping;package=' + ANDROID_PKG
+                  + ';S.browser_fallback_url=' + encodeURIComponent(STORE_URL) + ';end';
+
+  var ua = navigator.userAgent.toLowerCase();
+  var isIOS     = /iphone|ipad|ipod/.test(ua);
+  var isAndroid = /android/.test(ua);
+
+  // 버튼 링크 설정
+  document.getElementById('btnApp').href = isAndroid ? INTENT_URL : DEEPLINK;
+  document.getElementById('btnWeb').href = STORE_URL;
+
+  // 자동 실행 함수
+  function tryOpen() {
+    var fallbackTimer;
+
+    if (isAndroid) {
+      // Android: Intent URL 방식 (앱 없으면 자동으로 스토어 URL로 fallback)
+      location.href = INTENT_URL;
+    } else if (isIOS) {
+      // iOS: URI scheme 시도 → 일정 시간 후 앱 없으면 웹으로 이동
+      var start = Date.now();
+      location.href = DEEPLINK;
+      fallbackTimer = setTimeout(function () {
+        // 앱이 열렸다면 페이지가 blur돼서 시간이 지연됨
+        if (Date.now() - start < 2000) {
+          location.href = STORE_URL;
+        }
+      }, 1500);
+      // 앱이 열렸을 경우 타이머 취소
+      window.addEventListener('blur', function () {
+        clearTimeout(fallbackTimer);
+        document.getElementById('spinner').style.display = 'none';
+      });
+    } else {
+      // PC 등 기타 환경: 바로 웹으로
+      location.href = STORE_URL;
+    }
+  }
+
+  // 페이지 로드 후 1초 뒤 자동 실행
+  window.addEventListener('load', function () {
+    setTimeout(tryOpen, 1000);
+  });
+</script>
+
+</body>
+</html>

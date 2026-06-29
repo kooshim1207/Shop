@@ -124,7 +124,7 @@ var PRODUCTS = {
   '8':  { name: '휴먼메이드 카드지갑',  url: 'https://mkt.shopping.naver.com/link/69df62318729e7407cfaaa80' },
   '9':  { name: '빔즈 카드지갑',        url: 'https://mkt.shopping.naver.com/link/6a3b5eb3bb3426556b4189b2' },
   '10': { name: '몽벨 ZIP지갑',         url: 'https://mkt.shopping.naver.com/link/699fdb1466c73256cd59ec36' },
-  '11': { name: '몽벨 UL 모노 파우치', url: 'https://mkt.shopping.naver.com/link/69c4fa3201294e6740100f73' },
+  '11': { name: '몽벨 UL 모노 파우치', url: 'https://smartstore.naver.com/highqual_japan/products/13132629013' },
 };
 // ──────────────────────────────────────────────────────────────────
 
@@ -135,6 +135,7 @@ var product = PRODUCTS[pNum];
 if (!product) {
   document.getElementById('errorMsg').style.display = 'block';
   document.getElementById('btnMain').style.display  = 'none';
+  document.getElementById('btnSub').style.display   = 'none';
 } else {
   var STORE_URL = product.url;
   document.getElementById('productName').textContent = '📦 ' + product.name;

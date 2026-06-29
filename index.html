@@ -38,7 +38,7 @@
       font-size: 15px; font-weight: 700; color: #03C75A;
       margin-bottom: 6px;
     }
-    .sub { font-size: 14px; color: #888; margin-bottom: 28px; line-height: 1.6; }
+    .sub { font-size: 14px; color: #888; margin-bottom: 14px; line-height: 1.6; }
     .guide {
       background: #fff8e6;
       border: 1.5px solid #ffe082;
@@ -107,7 +107,7 @@
     <span class="icon">🛍</span>
     <span>네이버에서 상품 보기</span>
   </a>
-  <a class="btn-sub" id="btnSub" href="#">앱 없이 브라우저로 열기</a>
+
   <div class="error" id="errorMsg" style="display:none">상품을 찾을 수 없습니다.</div>
 </div>
 
@@ -151,8 +151,12 @@ if (!product) {
     ';S.browser_fallback_url=' + encodeURIComponent(STORE_URL) +
     ';end';
 
-  document.getElementById('btnMain').href = isAndroid ? CHROME_INTENT : STORE_URL;
-  document.getElementById('btnSub').href  = STORE_URL;
+  // iOS: x-safari 스킴으로 사파리 강제 실행
+  var IOS_SAFARI = 'x-safari-' + STORE_URL;
+
+  var isIOS = /iphone|ipad|ipod/.test(ua);
+
+  document.getElementById('btnMain').href = isAndroid ? CHROME_INTENT : (isIOS ? IOS_SAFARI : STORE_URL);
 }
 </script>
 
